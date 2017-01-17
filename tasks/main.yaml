@@ -22,3 +22,17 @@
     dest: /etc/sudoers.d/vagrant
   tags:
     - vagrant_user_sudo
+
+# adapted from: https://github.com/lpancescu/sig-cloud-instance-build/commit/507b443
+# see: https://github.com/CentOS/sig-cloud-instance-build/issues/76
+# Fix for issue #76, regular users can gain admin privileges via su
+# allow vagrant to use su, but prevent others from becoming root or vagrant
+- name: Allow only defined users to become root or vagrant
+  blockinfile:
+    dest: /etc/pam.d/su
+    state: present
+    insertafter: ^account\s\+sufficient\s\+pam_succeed_if.so uid = 0 use_uid quiet$
+    block: |
+      account   [success=1 default=ignore] \\
+      				pam_succeed_if.so user = vagrant use_uid quiet
+      account		required	pam_succeed_if.so user notin root:vagrant
