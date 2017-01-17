@@ -36,3 +36,5 @@
       account   [success=1 default=ignore] \\
       				pam_succeed_if.so user = vagrant use_uid quiet
       account		required	pam_succeed_if.so user notin root:vagrant
+  tags:
+    - vagrant_user_pamd
